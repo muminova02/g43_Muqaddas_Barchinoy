@@ -1,9 +1,8 @@
 package uz.app.service;
 
-import org.example.db.Db;
-import org.example.entity.Meal;
-import org.example.entity.MenuType;
+
 import uz.app.enums.Card;
+import uz.app.enums.User;
 import uz.app.repository.CardRepositary;
 
 import java.util.ArrayList;
@@ -14,15 +13,12 @@ public class CardService {
     private final InlineMarkupService inlineMarkupService = new InlineMarkupService();
 
 
-    public void addCard(Card card,User user) {
-        db.getAllMeals().put(menuType,new ArrayList<>());
-    }
+//    public void addCard(Card card, User user) {
+//
+//    }
 
-    public void test(Card card){
-        System.out.println("Card qani !!");
-        System.out.println("CARD MANA");
-        System.out.println("asdasd");
-    }
+
+
     private static CardService cardService;
 
     public static CardService getInstance() {
@@ -32,8 +28,5 @@ public class CardService {
         return cardService;
     }
 
-    userCard(){
-        
-    }
 
 }

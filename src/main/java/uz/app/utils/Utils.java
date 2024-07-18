@@ -4,15 +4,17 @@ import java.util.Map;
 
 public interface Utils {
 
-
-
     String SHOW_CARDS = "SHow Cards";
+    String ADD_CARD = "add Card";
+    String TRANSFER = "transfer";
+    String HISTORY = "history";
+    String DEPOSIT = "DEPOSIT";
 
 
-    String [][] edit_meal={
-            {EDIT_TITLE,CHANGE_PHOTO},
-            {EDIT_Description,EDIT_PRICE},
-            {ORQAGA}
+    String [][] MENU={
+            {SHOW_CARDS,ADD_CARD},
+            {TRANSFER,HISTORY},
+            {DEPOSIT}
     };
 
 

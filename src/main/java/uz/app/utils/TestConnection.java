@@ -17,15 +17,6 @@ public class TestConnection {
         props.setProperty("password", "root123");
         try {
             connection = DriverManager.getConnection(databaseURL, props);
-
-//            Statement statement = connection.createStatement();
-//            statement.execute("update users set password = 'parol'");
-//            PreparedStatement preparedStatement = connection.prepareStatement("insert into users(name,email,password,enabled) values(?,?,?,?)");
-//            preparedStatement.setString(1,"ali");
-//            preparedStatement.setString(2,"ali@gmail.com");
-//            preparedStatement.setString(3,"root123");
-//            preparedStatement.setBoolean(4,true);
-//            preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

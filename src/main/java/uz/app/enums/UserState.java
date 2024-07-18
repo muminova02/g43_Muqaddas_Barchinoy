@@ -3,7 +3,7 @@ package uz.app.enums;
 public enum UserState{
     DEFAULT,
     START,
-    FIRST_NAME,
+    NAME,
     PHONE_NUMBER,
 
     MAIN_MENU,

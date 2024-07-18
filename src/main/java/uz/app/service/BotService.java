@@ -1,10 +1,6 @@
 package uz.app.service;
 
 import lombok.SneakyThrows;
-import org.example.db.Db;
-import org.example.entity.User;
-import org.example.enums.State;
-import org.example.enums.UserState;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,8 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import org.example.util.Utils;
 
 public class BotService extends TelegramLongPollingBot {
     private static final BotLogicService logicService = BotLogicService.getInstance();

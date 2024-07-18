@@ -51,34 +51,7 @@ public class UserRepositary {
             e.printStackTrace();
         }
     }
-    public int isBasketActive(int user_id) {
-        Statement statement = testConnection.getStatement();
-        try {
-            ResultSet resultSet = statement.executeQuery(String.format("select * from basket where user_id = '%d' and active=true;",user_id));
-            resultSet.next();
-            return resultSet.getInt("id");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return 0;
-    }
-
-
-    public boolean addProductActiveBasket( int basketActiveId,int product_id) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("insert into basket_product(backet_id,product_id) values('%d','%d')",
-                    basketActiveId,
-                    product_id
-            );
-            statement.execute(query);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
 
 
@@ -176,7 +149,7 @@ public class UserRepositary {
             resultSet.next();
 //            System.out.println(resultSet.getString("password"));
 //            int row = resultSet.getRow();
-            User user1 =  AuthRepository.getInstance().makeUser(resultSet);
+            User user1 =  makeUser(resultSet);
             return Optional.of(user1);
         } catch (SQLException e) {
             e.printStackTrace();

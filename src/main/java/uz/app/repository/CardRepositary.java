@@ -80,18 +80,6 @@ public class CardRepositary {
     }
 
 
-    public void saveCategory(Category category) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("insert into category(name) values('%s')",
-                    category.getName()
-            );
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public void disableProduct(Integer product_id) {
         Statement statement = testConnection.getStatement();

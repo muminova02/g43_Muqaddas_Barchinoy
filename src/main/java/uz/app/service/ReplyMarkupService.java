@@ -1,10 +1,10 @@
 package uz.app.service;
 
-import org.example.entity.Meal;
-import org.example.entity.MenuType;
+
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import uz.app.enums.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,63 +30,37 @@ public class ReplyMarkupService {
         return replyKeyboardMarkup;
     }
 
-    public ReplyKeyboardMarkup keyboardMaker(Set<MenuType> options) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
 
-        KeyboardRow row1 = new KeyboardRow();
-        KeyboardRow row2 = new KeyboardRow();
 
-        int count = 0;
-        for (MenuType option : options) {
-            if (count % 2 == 0) {
-                row1.add(new KeyboardButton(option.getTitle()));
-            } else {
-                row2.add(new KeyboardButton(option.getTitle()));
-            }
-            count++;
-        }
+    public ReplyKeyboardMarkup keyboardMakerForCard(int user_id,ArrayList<Card> cards) {
+//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+//        List<KeyboardRow> keyboard = new ArrayList<>();
+//
+//        KeyboardRow row1 = new KeyboardRow();
+//        KeyboardRow row2 = new KeyboardRow();
+//
+//        int count = 0;
+//        for (Meal option : meals) {
+//            if (count % 2 == 0) {
+//                row1.add(new KeyboardButton(option.getTitle()));
+//            } else {
+//                row2.add(new KeyboardButton(option.getTitle()));
+//            }
+//            count++;
+//        }
+//
+//        // Adding "orqaga" button at the end
+//        row2.add(new KeyboardButton("orqaga"));
+//
+//        keyboard.add(row1);
+//        keyboard.add(row2);
+//
+//        replyKeyboardMarkup.setKeyboard(keyboard);
+//        replyKeyboardMarkup.setResizeKeyboard(true); // Optional: makes the keyboard fit the screen size
+//        replyKeyboardMarkup.setOneTimeKeyboard(true); // Optional: hides the keyboard after a button press
 
-        // Adding "orqaga" button at the end
-        row2.add(new KeyboardButton("orqaga"));
-
-        keyboard.add(row1);
-        keyboard.add(row2);
-
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        replyKeyboardMarkup.setResizeKeyboard(true); // Optional: makes the keyboard fit the screen size
-        replyKeyboardMarkup.setOneTimeKeyboard(true); // Optional: hides the keyboard after a button press
-
-        return replyKeyboardMarkup;
+//        return replyKeyboardMarkup;
+        return null;
     }
 
-    public ReplyKeyboardMarkup keyboardMaker(ArrayList<Meal> meals) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow row1 = new KeyboardRow();
-        KeyboardRow row2 = new KeyboardRow();
-
-        int count = 0;
-        for (Meal option : meals) {
-            if (count % 2 == 0) {
-                row1.add(new KeyboardButton(option.getTitle()));
-            } else {
-                row2.add(new KeyboardButton(option.getTitle()));
-            }
-            count++;
-        }
-
-        // Adding "orqaga" button at the end
-        row2.add(new KeyboardButton("orqaga"));
-
-        keyboard.add(row1);
-        keyboard.add(row2);
-
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        replyKeyboardMarkup.setResizeKeyboard(true); // Optional: makes the keyboard fit the screen size
-        replyKeyboardMarkup.setOneTimeKeyboard(true); // Optional: hides the keyboard after a button press
-
-        return replyKeyboardMarkup;
-    }
 }
