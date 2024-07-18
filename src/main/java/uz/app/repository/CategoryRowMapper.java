@@ -1,6 +1,5 @@
-/*
-package uz.app.repository;
 
+package uz.app.repository;
 
 
 import java.sql.ResultSet;
