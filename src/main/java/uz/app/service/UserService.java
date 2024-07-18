@@ -1,0 +1,64 @@
+package uz.app.service;
+
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import uz.app.enums.Card;
+import uz.app.enums.User;
+import uz.app.enums.UserState;
+import uz.app.repository.UserRepositary;
+
+import java.util.*;
+
+public class UserService {
+
+    private final ReplyMarkupService replyMarkupService = new ReplyMarkupService();
+    private final InlineMarkupService inlineMarkupService = new InlineMarkupService();
+    UserRepositary userRepositary = UserRepositary.getInstance();
+
+//    public User getUserById(Long userId){
+//        return db.getUsers().get(userId);
+//    }
+
+    public void updateState(Long chatId, UserState state){
+//        HashMap<Long, User> users = db.getUsers();
+//        users.forEach((aLong, user) ->{
+//            if(Objects.equals(aLong, chatId)){
+//                user.setState(state);
+//            }
+//        });
+    }
+
+    public UserState getState(Long chatId){
+//        HashMap<Long, User> users = db.getUsers();
+//        User user1 = users.get(chatId);
+//       return user1.getState();
+        return null;
+    }
+
+
+
+    public void addCardForUser(Long chatId, Card card) {
+//        if (!db.getMySavat().containsKey(chatId)) {
+//            HashMap<Long, ArrayList<Buyurtma>> mySavat = db.getMySavat();
+//            ArrayList<Buyurtma> buyurtmas = new ArrayList<>();
+//            buyurtmas.add(buyurtma);
+//            mySavat.put(chatId,buyurtmas);
+//        }else {
+//            db.getMySavat().get(chatId).add(buyurtma);
+//        }
+    }
+
+
+    private static UserService userService;
+
+    public static UserService getInstance() {
+        if (userService == null) {
+            userService=new UserService();
+        }
+        return userService;
+    }
+
+    public void saveUser(User user) {
+        userRepositary.save(user);
+
+    }
+}

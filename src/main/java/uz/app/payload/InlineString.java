@@ -1,16 +1,13 @@
-package uz.app.enums;
+package uz.app.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class User {
-    int id;
-    String name;
-    String state;
-    int chat_id;
-
+public class InlineString {
+    String message;
+    Boolean inlineData;
 }

@@ -1,8 +1,10 @@
 package uz.app.service;
 
-import org.example.payload.InlineString;
+
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import uz.app.payload.InlineString;
+
 import java.util.ArrayList;
 import java.util.List;
 

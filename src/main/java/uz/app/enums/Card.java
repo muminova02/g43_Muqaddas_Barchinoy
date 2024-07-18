@@ -8,5 +8,5 @@ public class Card {
     int id;
     String number;
     Double balance;
-    User user;
+    int user_id;
 }

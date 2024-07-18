@@ -1,3 +1,4 @@
+/*
 package uz.app.repository;
 
 import uz.app.entity.Product;
@@ -18,3 +19,4 @@ public class ProductRowMapper implements RowMapper<Product>{
         return products;
     }
 }
+*/

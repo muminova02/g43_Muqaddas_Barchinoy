@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 public class CardRepositary {
@@ -35,7 +37,32 @@ public class CardRepositary {
         return results;
     }
 
+    public Card makeCard(ResultSet resultSet) throws SQLException {
+        Card card = new Card();
+        card.setId(resultSet.getInt("id"));
+        card.setNumber(resultSet.getString("number"));
+        card.setBalance(resultSet.getDouble("balance"));
+        card.setUser_id(resultSet.getInt("user_id"));
+        return card;
+    }
 
+
+
+    public Optional<Card> getCarsById(String numaber ){
+        Statement statement = testConnection.getStatement();
+
+        ResultSet resultSet = null;
+        try {
+            String format = String.format("select * from card where user_id = '%d' or number = '%s' ;", numaber, numaber);
+            resultSet = statement.executeQuery(format);
+            resultSet.next();
+            Card card =  makeCard(resultSet);
+            return Optional.of(card);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
 //    public List<Category> getAllCategory() {
 //        try {
@@ -68,11 +95,10 @@ public class CardRepositary {
     public void saveCard(Card card) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into product(name,description,price,category_id) values('%s','%s','%f','%d')",
-                    product.getName(),
-                    product.getDescription(),
-                    product.getPrice(),
-                    product.getCategory_id()
+            String query = String.format("insert into card(number,balance,user_id) values('%s','%f','%d')",
+                    card.getNumber(),
+                    card.getBalance(),
+                    card.getUser_id()
             );
             statement.execute(query);
         } catch (SQLException e) {
@@ -80,18 +106,6 @@ public class CardRepositary {
         }
     }
 
-
-    public void saveCategory(Category category) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("insert into category(name) values('%s')",
-                    category.getName()
-            );
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public void disableProduct(Integer product_id) {
