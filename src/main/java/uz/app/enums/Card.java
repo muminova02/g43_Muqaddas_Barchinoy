@@ -9,6 +9,4 @@ public class Card {
     String number;
     Double balance;
     int user_id;
-
-
 }

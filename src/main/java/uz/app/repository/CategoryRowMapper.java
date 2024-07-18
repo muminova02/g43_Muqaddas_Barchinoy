@@ -1,3 +1,4 @@
+
 package uz.app.repository;
 
 
@@ -13,3 +14,4 @@ public class CategoryRowMapper implements RowMapper<Category> {
         return category;
     }
 }
+*/

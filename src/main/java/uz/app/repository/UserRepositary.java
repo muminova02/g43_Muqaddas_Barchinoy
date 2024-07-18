@@ -54,7 +54,7 @@ public class UserRepositary {
 
 
 
-    public boolean addProductInNewBasket(Basket basket, int productId) {
+   /* public boolean addProductInNewBasket(Basket basket, int productId) {
         Statement statement = testConnection.getStatement();
         try {
             String query = String.format("insert into basket(user_id) values('%d')",
@@ -72,7 +72,7 @@ public class UserRepositary {
 
     }
 
-
+*/
 
     private static UserRepositary userRepositary;
 
@@ -84,7 +84,7 @@ public class UserRepositary {
     }
 
 
-    public List<Product> getProducts(ResultSet resultSet) {
+   /* public List<Product> getProducts(ResultSet resultSet) {
         ProductRowMapper productRowMapper= new ProductRowMapper();
         List<Product> products = new ArrayList<>();
         try {
@@ -112,7 +112,7 @@ public class UserRepositary {
             e.printStackTrace();
         }
         return new ArrayList<>();
-    }
+    }*/
 
     public void createHistory(int basketActive, Double overAllsumma) {
         Statement statement = testConnection.getStatement();
@@ -140,6 +140,11 @@ public class UserRepositary {
             e.printStackTrace();
         }
     }
+    public List<Card> getCarsById(Long id){
+        Statement statement = testConnection.getStatement();
+
+        ResultSet resultSet = statement.executeQuery(String.format("select * from card where id = '%d';",id));
+    }
 
     public Optional<User> getUserById(int userId) {
         Statement statement = testConnection.getStatement();
@@ -155,6 +160,34 @@ public class UserRepositary {
         }
         return Optional.empty();
     }
+
+    public void setUpdateState(Long chatId, String string) {
+        Statement statement = testConnection.getStatement();
+
+        try {
+            String format = String.format("update users  set  state = '%s' where chat_id = '%d';", string, chatId);
+            statement.execute(format);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void setUserName(Long chatId, String text) {
+
+        Statement statement = testConnection.getStatement();
+
+        String format = String.format(" UPDATE users SET name = %s WHERE chatId = %s",text,chatId);
+        try {
+            statement.execute(format);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
 //    public void minusUserBalanse(int user_id, double v) {
 //        Statement statement = testConnection.getStatement();

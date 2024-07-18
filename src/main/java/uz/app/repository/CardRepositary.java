@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 public class CardRepositary {
@@ -35,7 +37,32 @@ public class CardRepositary {
         return results;
     }
 
+    public Card makeCard(ResultSet resultSet) throws SQLException {
+        Card card = new Card();
+        card.setId(resultSet.getInt("id"));
+        card.setNumber(resultSet.getString("number"));
+        card.setBalance(resultSet.getDouble("balance"));
+        card.setUser_id(resultSet.getInt("user_id"));
+        return card;
+    }
 
+
+
+    public Optional<Card> getCarsById(String numaber ){
+        Statement statement = testConnection.getStatement();
+
+        ResultSet resultSet = null;
+        try {
+            String format = String.format("select * from card where user_id = '%d' or number = '%s' ;", numaber, numaber);
+            resultSet = statement.executeQuery(format);
+            resultSet.next();
+            Card card =  makeCard(resultSet);
+            return Optional.of(card);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
 //    public List<Category> getAllCategory() {
 //        try {
