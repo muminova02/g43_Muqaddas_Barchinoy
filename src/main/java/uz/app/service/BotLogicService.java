@@ -1,16 +1,6 @@
 package uz.app.service;
 
-import org.example.db.Db;
-import org.example.entity.Buyurtma;
-import org.example.entity.Meal;
-import org.example.entity.MenuType;
-import org.example.entity.User;
-import org.example.entity.Xabar;
-import org.example.enums.AdminState;
-import org.example.enums.BuyurtmaState;
-import org.example.enums.UserState;
-import org.example.payload.InlineString;
-import org.example.util.Utils;
+
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
