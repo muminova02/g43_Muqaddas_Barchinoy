@@ -68,11 +68,10 @@ public class CardRepositary {
     public void saveCard(Card card) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into product(name,description,price,category_id) values('%s','%s','%f','%d')",
-                    product.getName(),
-                    product.getDescription(),
-                    product.getPrice(),
-                    product.getCategory_id()
+            String query = String.format("insert into card(number,balance,user_id) values('%s','%f','%d')",
+                    card.getNumber(),
+                    card.getBalance(),
+                    card.getUser_id()
             );
             statement.execute(query);
         } catch (SQLException e) {

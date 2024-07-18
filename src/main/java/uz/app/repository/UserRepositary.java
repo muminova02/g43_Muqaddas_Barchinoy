@@ -3,6 +3,7 @@ package uz.app.repository;
 import uz.app.entity.Basket;
 import uz.app.entity.Product;
 import uz.app.entity.User;
+import uz.app.enums.User;
 import uz.app.utils.TestConnection;
 
 import java.sql.ResultSet;
@@ -16,7 +17,40 @@ public class UserRepositary {
 
     TestConnection testConnection = TestConnection.getInstance();
 
+    public User makeUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setName(resultSet.getString("name"));
+        user.setState("start");
+        return user;
+    }
 
+    public List<User> getUsers(ResultSet resultSet) {
+        List<User> users = new ArrayList<>();
+        try {
+            while (true) {
+                if (!resultSet.next()) break;
+                User user = makeUser(resultSet);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+
+    public void save(User user) {
+        Statement statement = testConnection.getStatement();
+        try {
+            String query = String.format("insert into users(state,chat_id) values('%s','%d')",
+                    user.getState(),
+                    user.getChat_id()
+            );
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public int isBasketActive(int user_id) {
         Statement statement = testConnection.getStatement();
         try {
@@ -140,8 +174,8 @@ public class UserRepositary {
         try {
             ResultSet resultSet = statement.executeQuery(String.format("select * from users where id = '%d';", userId));
             resultSet.next();
-            System.out.println(resultSet.getString("password"));
-            int row = resultSet.getRow();
+//            System.out.println(resultSet.getString("password"));
+//            int row = resultSet.getRow();
             User user1 =  AuthRepository.getInstance().makeUser(resultSet);
             return Optional.of(user1);
         } catch (SQLException e) {
@@ -150,47 +184,52 @@ public class UserRepositary {
         return Optional.empty();
     }
 
-    public void minusUserBalanse(int user_id, double v) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("Update users set balance = %f where id = %d",
-                    v,
-                    user_id
-            );
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
+//    public void minusUserBalanse(int user_id, double v) {
+//        Statement statement = testConnection.getStatement();
+//        try {
+//            String query = String.format("Update users set balance = %f where id = %d",
+//                    v,
+//                    user_id
+//            );
+//            statement.execute(query);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void plusUserBalanse(int user_id, double v) {
+//        Statement statement = testConnection.getStatement();
+//        try {
+//            String query = String.format("Update users set balance = %f where id = %d",
+//                    v,
+//                    user_id
+//            );
+//            statement.execute(query);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+//    public List<Product> getProductsInHistory(User user) {
+//        Statement statement = testConnection.getStatement();
+//        try {
+//            return getProducts(statement.executeQuery(String.format("SELECT p.*\n" +
+//                    "FROM basket b\n" +
+//                    "Join basket_product bp ON b.id = bp.backet_id\n" +
+//                    "JOIN product p ON bp.product_id = p.id\n" +
+//                    "WHERE b.active = false\n" +
+//                    " AND b.user_id = %d;\n;",user.getId())));
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return new ArrayList<>();
+//    }
+
+
+    public boolean isUserHave(int chatId) {
+        Optional<User> optional = getUserById(chatId);
+        if (optional.isPresent()) {
+            return true;
         }
+        return false;
     }
-    public void plusUserBalanse(int user_id, double v) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("Update users set balance = %f where id = %d",
-                    v,
-                    user_id
-            );
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Product> getProductsInHistory(User user) {
-        Statement statement = testConnection.getStatement();
-        try {
-            return getProducts(statement.executeQuery(String.format("SELECT p.*\n" +
-                    "FROM basket b\n" +
-                    "Join basket_product bp ON b.id = bp.backet_id\n" +
-                    "JOIN product p ON bp.product_id = p.id\n" +
-                    "WHERE b.active = false\n" +
-                    " AND b.user_id = %d;\n;",user.getId())));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
-
-
-
 }

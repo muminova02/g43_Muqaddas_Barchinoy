@@ -1,21 +1,14 @@
 package uz.app.service;
 
-import org.example.db.Db;
-import org.example.entity.Buyurtma;
-import org.example.entity.Meal;
-import org.example.entity.MenuType;
-import org.example.entity.User;
-import org.example.entity.Xabar;
-import org.example.enums.AdminState;
-import org.example.enums.BuyurtmaState;
-import org.example.enums.UserState;
-import org.example.payload.InlineString;
-import org.example.util.Utils;
+
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import uz.app.enums.User;
+import uz.app.enums.UserState;
+import uz.app.repository.UserRepositary;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,27 +17,22 @@ import java.util.List;
 
 public class BotLogicService {
     private final UserService userServise = UserService.getInstance();
-    private final AdminService adminService = AdminService.getInstance();
-    public final Buyurtma buyurtma = new Buyurtma();
-    public final MenuType menuType = new MenuType();
-    public final Meal meal = new Meal();
+    UserRepositary userRepositary = UserRepositary.getInstance();
+    private final CardService cardService = CardService.getInstance();
     private final SendMessage sendMessage = new SendMessage();
-    private final SendMessage sendMessageToAdmin = new SendMessage();
-    private Db db = Db.getInstance();
     private BotService botService = BotService.getInstance();
     private final User currentUser =new User();
-    private final Xabar xabar=new Xabar();
     private final ReplyMarkupService replyService = new ReplyMarkupService();
     private final InlineMarkupService inlineService = new InlineMarkupService();
 
     public void messageHandler(Update update){
         Long chatId = update.getMessage().getChatId();
-        if (chatId == 6436944940L ){
-//            userServise.updateState(chatId, AdminState.ADMIN_START);
-//                    userStateHandler(update);
-            adminStateHandler(chatId,update);
-            return;
-        }
+//        if (chatId == 6436944940L ){
+////            userServise.updateState(chatId, AdminState.ADMIN_START);
+////                    userStateHandler(update);
+//            adminStateHandler(chatId,update);
+//            return;
+//        }
         String text = update.getMessage().getText();
         System.out.println(chatId);
         User currentUser1;
@@ -53,11 +41,11 @@ public class BotLogicService {
 
         switch (text){
             case "/start" -> {
-                if (!db.getUsers().containsKey(chatId)) {
+                if (!userRepositary.isUserHave(chatId.intValue())) {
                     User user = new User();
-                    user.setChatId(chatId);
-                    user.setState(UserState.START);
-                    db.getUsers().put(chatId,user);
+                    user.setChat_id(chatId.intValue());
+                    user.setState(String.valueOf(UserState.START));
+                    userServise.saveUser(user);
                     userStateHandler(update);
 //                   userServise.updateState(chatId,UserState.START);
                 }
@@ -287,7 +275,7 @@ public class BotLogicService {
             PhotoSize photo = photos.get(photos.size() - 1);
             menuType.setPhoto(photo.getFileId() + ";" + update.getMessage().getMessageId());
             MenuType menuType1 = new MenuType(menuType.getTitle(),menuType.getPhoto());
-            adminService.addMenu(menuType1);
+            cardService.addMenu(menuType1);
             sendMessageToAdmin.setText("menu qo'shildi");
             sendMessageToAdmin.setReplyMarkup(replyService.keyboardMaker(Utils.create_menu));
             botService.executeMessages(sendMessageToAdmin);
@@ -298,7 +286,7 @@ public class BotLogicService {
             PhotoSize photo = photos.get(photos.size() - 1);
             meal.setPhoto(photo.getFileId() + ";" + update.getMessage().getMessageId());
             Meal meal1 = new Meal(meal.getTitle(),meal.getPhoto(),meal.getDescription(),meal.getPrice());
-            adminService.addMeal(menuType.getTitle(),meal1);
+            cardService.addMeal(menuType.getTitle(),meal1);
             sendMessageToAdmin.setText("Meal qo'shildi");
             sendMessageToAdmin.setReplyMarkup(replyService.keyboardMaker(Utils.create_meal));
             botService.executeMessages(sendMessageToAdmin);

@@ -1,6 +1,7 @@
 package uz.app.repository;
 
 import uz.app.entity.*;
+import uz.app.enums.User;
 import uz.app.utils.TestConnection;
 
 import java.sql.ResultSet;
@@ -59,19 +60,7 @@ public class AuthRepository {
 
     }
 
-    public User makeUser(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setName(resultSet.getString("name"));
-        user.setEmail(resultSet.getString("email"));
-        user.setPassword(resultSet.getString("password"));
-        user.setPhone(resultSet.getString("phone_number"));
-        user.setRole(resultSet.getString("role"));
-        user.setEnabled(resultSet.getBoolean("enabled"));
-        user.setBalance(resultSet.getDouble("balance"));
-        user.setSmsCode(resultSet.getString("smscode"));
-        return user;
-    }
+
 
     public List<User> getUsers(ResultSet resultSet) {
         List<User> users = new ArrayList<>();

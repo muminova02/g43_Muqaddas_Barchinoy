@@ -18,15 +18,11 @@ import org.example.util.Utils;
 
 public class BotService extends TelegramLongPollingBot {
     private static final BotLogicService logicService = BotLogicService.getInstance();
-//    private final HashMap<Long,User> users = new HashMap<>();
-//    private final HashMap<Long, UserState> userStateHashMap = new HashMap<>();
 
-    private final UserService userServise = UserService.getInstance();
+
     private SendMessage sendMessage = new SendMessage();
     private SendMessage sendMessageToAdmin = new SendMessage();
-    Db db = Db.getInstance();
 
-   private final User currentUser =new User();
     private final ReplyMarkupService replyService = new ReplyMarkupService();
     private final InlineMarkupService inlineService = new InlineMarkupService();
     @SneakyThrows
