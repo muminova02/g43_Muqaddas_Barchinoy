@@ -1,6 +1,5 @@
 package uz.app.repository;
 
-import uz.app.entity.Category;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

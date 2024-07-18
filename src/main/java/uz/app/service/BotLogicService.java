@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import uz.app.enums.Card;
 import uz.app.enums.User;
 import uz.app.enums.UserState;
 import uz.app.repository.UserRepositary;
@@ -27,12 +28,6 @@ public class BotLogicService {
 
     public void messageHandler(Update update){
         Long chatId = update.getMessage().getChatId();
-//        if (chatId == 6436944940L ){
-////            userServise.updateState(chatId, AdminState.ADMIN_START);
-////                    userStateHandler(update);
-//            adminStateHandler(chatId,update);
-//            return;
-//        }
         String text = update.getMessage().getText();
         System.out.println(chatId);
         User currentUser1;
@@ -47,13 +42,18 @@ public class BotLogicService {
                     user.setState(String.valueOf(UserState.START));
                     userServise.saveUser(user);
                     userStateHandler(update);
-//                   userServise.updateState(chatId,UserState.START);
                 }
             }
             case Utils.SHOW_CARDS-> {
-//                sendMessage.setText("choose menu type:");
-//                sendMessage.setReplyMarkup(replyService.keyboardMaker(db.getAllMeals().keySet()));
-//                botService.executeMessages(sendMessage);
+                List<Card> cards = userServise.showCards(chatId);
+                if (cards.isEmpty()) {
+                    sendMessage.setText("cards not yet");
+                    botService.executeMessages(sendMessage);
+                    return;
+                }
+                sendMessage.setText("your card");
+                sendMessage.setReplyMarkup(inlineService.inlineMarkup(cards));
+                botService.executeMessages(sendMessage);
 //                userServise.updateState(chatId,UserState.CHOOSE_MENU);
             }
             case Utils.ADD_CARD -> {
@@ -94,16 +94,16 @@ public class BotLogicService {
 
         switch (state){
             case START -> {
-//                sendMessage.setText("Iltimos ismingizni kiriting.");
-//                userServise.updateState(chatId,UserState.NAME);
-//                botService.executeMessages(sendMessage);
+                sendMessage.setText("Iltimos ismingizni kiriting.");
+                userServise.updateState(chatId,UserState.NAME);
+                botService.executeMessages(sendMessage);
             }
             case NAME -> {
-//                User user = db.getUsers().get(chatId);
-//                user.setName(text);
-//                userServise.updateState(chatId,UserState.PHONE_NUMBER);
-//                sendMessage.setText("Telfon Raqamingizni Kiriting.");
-//                botService.executeMessages(sendMessage);
+                  userRepositary.setUserName(chatId,text);
+                  userServise.updateState(chatId,UserState.MAIN_MENU);
+                  sendMessage.setText("Welcome Menu");
+                  sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                  botService.executeMessages(sendMessage);
             }
             case WRITING -> {
 //                xabar.setDesc(text);

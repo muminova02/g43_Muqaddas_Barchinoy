@@ -19,12 +19,7 @@ public class UserService {
 //    }
 
     public void updateState(Long chatId, UserState state){
-//        HashMap<Long, User> users = db.getUsers();
-//        users.forEach((aLong, user) ->{
-//            if(Objects.equals(aLong, chatId)){
-//                user.setState(state);
-//            }
-//        });
+        userRepositary.setUpdateState(chatId,state.toString());
     }
 
     public UserState getState(Long chatId){
@@ -60,5 +55,10 @@ public class UserService {
     public void saveUser(User user) {
         userRepositary.save(user);
 
+    }
+
+    public List<Card> showCards(Long chatId) {
+        List<Card> cards = userRepositary.getCardsById(chatId);
+        return cards;
     }
 }

@@ -1,8 +1,7 @@
 package uz.app.repository;
 
-import uz.app.entity.Basket;
-import uz.app.entity.Product;
-import uz.app.entity.User;
+
+import uz.app.enums.Card;
 import uz.app.enums.User;
 import uz.app.utils.TestConnection;
 
@@ -205,4 +204,50 @@ public class UserRepositary {
         }
         return false;
     }
+
+    public void setUpdateState(Long chatId, String string) {
+
+
+    }
+
+    public void setUserName(Long chatId, String text) {
+
+
+    }
+
+    public List<Card> getCardsById(Long chatId) {
+        try {
+            Statement statement = testConnection.getStatement();
+            return getCards(statement.executeQuery(String.format("select card.* from card join users on card.user_id = users.id where users.chat_id = %d;",chatId)));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Card> getCards(ResultSet resultSet) {
+        List<Card> cards = new ArrayList<>();
+        try {
+            while (true) {
+                if (!resultSet.next()) break;
+                Card card = makeCard(resultSet);
+                cards.add(card);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return cards;
+    }
+
+    public Card makeCard(ResultSet resultSet) throws SQLException {
+        Card card = new Card();
+        card.setId(resultSet.getInt("id"));
+        card.setNumber(resultSet.getString("number"));
+        card.setBalance(resultSet.getDouble("balance"));
+        card.setUser_id(resultSet.getInt("user_id"));
+        return card;
+    }
+
+
+
 }

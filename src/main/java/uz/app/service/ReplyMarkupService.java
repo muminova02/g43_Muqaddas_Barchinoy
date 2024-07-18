@@ -32,7 +32,7 @@ public class ReplyMarkupService {
 
 
 
-    public ReplyKeyboardMarkup keyboardMakerForCard(int user_id,ArrayList<Card> cards) {
+    public ReplyKeyboardMarkup keyboardMakerForCard(ArrayList<Card> cards) {
 //        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 //        List<KeyboardRow> keyboard = new ArrayList<>();
 //
