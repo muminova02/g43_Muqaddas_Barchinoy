@@ -32,14 +32,9 @@ public class UserService {
 
 
     public void addCardForUser(Long chatId, Card card) {
-//        if (!db.getMySavat().containsKey(chatId)) {
-//            HashMap<Long, ArrayList<Buyurtma>> mySavat = db.getMySavat();
-//            ArrayList<Buyurtma> buyurtmas = new ArrayList<>();
-//            buyurtmas.add(buyurtma);
-//            mySavat.put(chatId,buyurtmas);
-//        }else {
-//            db.getMySavat().get(chatId).add(buyurtma);
-//        }
+        Integer userIdInDb = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        card.setUser_id(userIdInDb);
+        userRepositary.addCard(card);
     }
 
 
@@ -60,5 +55,12 @@ public class UserService {
     public List<Card> showCards(Long chatId) {
         List<Card> cards = userRepositary.getCardsById(chatId);
         return cards;
+    }
+
+    public void setTransferAmount(Long chatId, String text) {
+        Integer userIdByChatid = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        boolean b = userRepositary.checkBalanseUserInTransfer(chatId, text);
+        if (b){
+        }
     }
 }

@@ -140,11 +140,14 @@ public class UserRepositary {
             e.printStackTrace();
         }
     }
-    public List<Card> getCarsById(Long id){
+    public List<Card> getCarsById(Long id) throws SQLException {
         Statement statement = testConnection.getStatement();
 
         ResultSet resultSet = statement.executeQuery(String.format("select * from card where id = '%d';",id));
+        return List.of();
     }
+
+
 
     public Optional<User> getUserById(int userId) {
         Statement statement = testConnection.getStatement();
@@ -161,6 +164,17 @@ public class UserRepositary {
         return Optional.empty();
     }
 
+    public Integer getUserIdByChatid(int chat_id) {
+        Statement statement = testConnection.getStatement();
+        try {
+            ResultSet resultSet = statement.executeQuery(String.format("select * from users where chat_id = '%d';", chat_id));
+            resultSet.next();
+            return resultSet.getInt("chat_id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public void setUpdateState(Long chatId, String string) {
         Statement statement = testConnection.getStatement();
 
@@ -229,6 +243,16 @@ public class UserRepositary {
 //        return new ArrayList<>();
 //    }
 
+    public boolean addCard(Card card) {
+        Statement statement = testConnection.getStatement();
+        String query = String.format("INSERT INTO card(number,balance,user_id) values('%s','%f','%d',)",card.getNumber(),card.getBalance(),card.getUser_id());
+        try {
+            statement.execute(query);
+        } catch (SQLException e) {
+            return false;
+        }
+        return true;
+    }
 
     public boolean isUserHave(int chatId) {
         Optional<User> optional = getUserById(chatId);
@@ -238,15 +262,7 @@ public class UserRepositary {
         return false;
     }
 
-    public void setUpdateState(Long chatId, String string) {
 
-
-    }
-
-    public void setUserName(Long chatId, String text) {
-
-
-    }
 
     public List<Card> getCardsById(Long chatId) {
         try {
@@ -282,5 +298,39 @@ public class UserRepositary {
     }
 
 
+    public void setTransferSecondCardNumber(Long chatId, String text) {
+        int id = getUserIdByChatid(Math.toIntExact(chatId));
+        Statement statement = testConnection.getStatement();
+        String query = String.format("update transfer set to_card = '%s' where user_id = '%d';",text,id);
+        try {
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public boolean checkBalanseUserInTransfer(Long chatId, String text) {
+        Integer userId = getUserIdByChatid(Math.toIntExact(chatId));
+        Statement statement = testConnection.getStatement();
+        String from_card;
+        Double balance = 0d;
+        try {
+            ResultSet resultSet = statement.executeQuery(String.format("select from_card from transfer where user_id = '%d'", userId));
+            resultSet.next();
+            from_card=resultSet.getString("from_card");
+            Statement statement1 = testConnection.getStatement();
+            ResultSet resultSet1 = statement1.executeQuery(String.format("select balance from card where number = '%s'",from_card));
+            resultSet1.next();
+            balance = resultSet1.getDouble("balance");
+            if (balance<Double.valueOf(text)){
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+
+    }
 }

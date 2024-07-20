@@ -51,18 +51,36 @@ public class BotLogicService {
                     botService.executeMessages(sendMessage);
                     return;
                 }
-                sendMessage.setText("your card");
+                sendMessage.setText("your cards: ");
                 sendMessage.setReplyMarkup(inlineService.inlineMarkup(cards));
                 botService.executeMessages(sendMessage);
+                sendMessage.setText("a");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                botService.executeMessages(sendMessage);
+
+                // keyin calbackda kartani bosganda karta haqida ma'lumotlar chiqsin;
 //                userServise.updateState(chatId,UserState.CHOOSE_MENU);
             }
             case Utils.ADD_CARD -> {
-//                userServise.updateState(chatId,UserState.MAIN_MENU);
+                sendMessage.setText("write your new card number: ");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                botService.executeMessages(sendMessage);
+                userServise.updateState(chatId,UserState.ADD_CARD_NUMBER);
             }
             case Utils.TRANSFER-> {
-//
-//                botService.executeMessages(sendMessage1);
-//                userServise.updateState(chatId,UserState.SEARCH_SAVAT);
+                List<Card> cards = userServise.showCards(chatId);
+                if (cards.isEmpty()) {
+                    sendMessage.setText("cards not yet");
+                    botService.executeMessages(sendMessage);
+                    return;
+                }
+                sendMessage.setText("your card number: ");
+                sendMessage.setReplyMarkup(inlineService.inlineMarkup(cards));
+                botService.executeMessages(sendMessage);
+//                userServise.updateState(chatId,);
+//                shu yerda state ni o'zgartirib calbackda cardni ushlab oladi,
+//                keyin transferdagi db ga bittasini saqlaydi, keyin ikkinchini shu pasda saqlaymiz keyin transfer,
+
             }
             case Utils.DEPOSIT ->{
 //                botService.executeMessages(sendMessage);
@@ -105,6 +123,28 @@ public class BotLogicService {
                   sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
                   botService.executeMessages(sendMessage);
             }
+            case ADD_CARD_NUMBER ->{
+                Card card = new Card();
+                card.setNumber(text);
+                card.setBalance((double) 0);
+                userServise.addCardForUser(chatId,card);
+                sendMessage.setText("Card qo'shildi");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                userServise.updateState(chatId,UserState.MAIN_MENU);
+                botService.executeMessages(sendMessage);
+            }
+            case TRANSFER_CARD_2 -> {
+                userRepositary.setTransferSecondCardNumber(chatId,text);
+                sendMessage.setText("O'tkazmoqchi bo'lgan summani kiriting: ");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(null));
+                botService.executeMessages(sendMessage);
+                userServise.updateState(chatId,UserState.TRANSFER_AMOUNT);
+            }
+            case TRANSFER_AMOUNT -> {
+                userServise.setTransferAmount(chatId,text);
+            }
+
+
             case WRITING -> {
 //                xabar.setDesc(text);
 //                xabar.setChatId(chatId);

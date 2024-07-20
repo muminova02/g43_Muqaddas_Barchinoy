@@ -4,16 +4,15 @@ public enum UserState{
     DEFAULT,
     START,
     NAME,
-    PHONE_NUMBER,
+
+    ADD_CARD_NUMBER,
+
+    TRANSFER_CARD_1,
+    TRANSFER_CARD_2,
+    TRANSFER_AMOUNT,
 
     MAIN_MENU,
 
-    CHOOSE_MENU,
-    CHOOSE_MEAL,
-    CHOOSE_COUNT,
-
-    SEARCH_SAVAT,
-    ALOQA,
     WRITING
 
 }
