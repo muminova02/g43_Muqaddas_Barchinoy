@@ -2,17 +2,12 @@ package uz.app.service;
 
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import uz.app.enums.Card;
 import uz.app.enums.User;
 import uz.app.enums.UserState;
 import uz.app.repository.UserRepositary;
 import uz.app.utils.Utils;
-
-import java.io.File;
 
 import java.util.List;
 
@@ -82,14 +77,24 @@ public class BotLogicService {
 //                keyin transferdagi db ga bittasini saqlaydi, keyin ikkinchini shu pasda saqlaymiz keyin transfer,
 
             }
+            case Utils.AGREE -> {
+                userServise.TransferAmount(chatId);
+                sendMessage.setText("O'kazma muvaffaqiyatli amalga oshirildi");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                botService.executeMessages(sendMessage);
+            }
             case Utils.DEPOSIT ->{
 //                botService.executeMessages(sendMessage);
 //                userServise.updateState(chatId,UserState.MAIN_MENU);
             }
             case Utils.HISTORY -> {
-//                sendMessage.setText("Agar biror muammo tug'ilgan bo'lsa +998901234567 yoki" +
-//                        " +998912345678 shu raqamlarga murojat qilishingiz mumkin");
-//                botService.executeMessages(sendMessage);
+//
+            }
+            case Utils.CANCEL -> {
+                userRepositary.setTransferCanceled(chatId);
+                sendMessage.setText("canseled 👌");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                botService.executeMessages(sendMessage);
             }
             case "orqaga"-> {
                 System.out.println("orqaga");
@@ -141,21 +146,22 @@ public class BotLogicService {
                 userServise.updateState(chatId,UserState.TRANSFER_AMOUNT);
             }
             case TRANSFER_AMOUNT -> {
-                userServise.setTransferAmount(chatId,text);
-            }
-
-
-            case WRITING -> {
-//                xabar.setDesc(text);
-//                xabar.setChatId(chatId);
-//                db.setXabar(chatId,xabar);
-//                sendMessage.setText("Xabaringiz qabul qilindi tez orada siz bilan bog'lanamiz ;)");
-//                botService.executeMessages(sendMessage);
+                boolean b = userServise.setTransferAmount(chatId, text);
+                if (!b){
+                    sendMessage.setText("Mabla'ingizni tekshirib ko'ring: ");
+                    sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                    botService.executeMessages(sendMessage);
+                    return;
+                }
+                String  inform = userRepositary.getUserActiveTransferInform(chatId);
+                sendMessage.setText("Siz kiritgan ma'lumotlar: \n" + inform );
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.TRANSFER_AGREE));
+                botService.executeMessages(sendMessage);
             }
             default -> {
-//                sendMessage.setText("Menuni tanlang");
-//                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.mainMenuUser));
-//                botService.executeMessages(sendMessage);
+                sendMessage.setText("Menuni tanlang");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+                botService.executeMessages(sendMessage);
             }
         }
 

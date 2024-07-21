@@ -57,10 +57,22 @@ public class UserService {
         return cards;
     }
 
-    public void setTransferAmount(Long chatId, String text) {
+    public boolean setTransferAmount(Long chatId, String text) {
         Integer userIdByChatid = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
         boolean b = userRepositary.checkBalanseUserInTransfer(chatId, text);
         if (b){
+            userRepositary.setTransferAmount(userIdByChatid,text);
+            return true;
         }
+        else return false;
+    }
+
+    public void TransferAmount(Long chatId) {
+        String[] transferActivebyUser = userRepositary.getTransferActivebyUser(chatId);
+        String user_id = transferActivebyUser[0];
+        Double amount = Double.parseDouble(transferActivebyUser[3]);
+        String card1 = transferActivebyUser[1];
+        String card2 = transferActivebyUser[2];
+        userRepositary.transferBetCards(Integer.valueOf(user_id),card1,card2,amount);
     }
 }

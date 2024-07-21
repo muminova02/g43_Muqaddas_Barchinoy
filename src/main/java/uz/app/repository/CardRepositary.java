@@ -64,33 +64,6 @@ public class CardRepositary {
 
     }
 
-//    public List<Category> getAllCategory() {
-//        try {
-//            Statement statement = testConnection.getStatement();
-//            return getCategoryies(statement.executeQuery(String.format("select * from users;")));
-//        } catch (
-//        SQLException e) {
-//        e.printStackTrace();
-//        }
-//        return new ArrayList<>();
-//    }
-//
-//
-//
-//    private List<Category> getCategoryies(ResultSet resultSet) {
-//        List<Category> categories = new ArrayList<>();
-//        try {
-//            while (true) {
-//                if (!resultSet.next()) break;
-//                Category category = makeCategory(resultSet);
-//                categories.add(category);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return categories;
-//    }
-
 
     public void saveCard(Card card) {
         Statement statement = testConnection.getStatement();

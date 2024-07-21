@@ -33,33 +33,7 @@ public class ReplyMarkupService {
 
 
     public ReplyKeyboardMarkup keyboardMakerForCard(ArrayList<Card> cards) {
-//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-//        List<KeyboardRow> keyboard = new ArrayList<>();
-//
-//        KeyboardRow row1 = new KeyboardRow();
-//        KeyboardRow row2 = new KeyboardRow();
-//
-//        int count = 0;
-//        for (Meal option : meals) {
-//            if (count % 2 == 0) {
-//                row1.add(new KeyboardButton(option.getTitle()));
-//            } else {
-//                row2.add(new KeyboardButton(option.getTitle()));
-//            }
-//            count++;
-//        }
-//
-//        // Adding "orqaga" button at the end
-//        row2.add(new KeyboardButton("orqaga"));
-//
-//        keyboard.add(row1);
-//        keyboard.add(row2);
-//
-//        replyKeyboardMarkup.setKeyboard(keyboard);
-//        replyKeyboardMarkup.setResizeKeyboard(true); // Optional: makes the keyboard fit the screen size
-//        replyKeyboardMarkup.setOneTimeKeyboard(true); // Optional: hides the keyboard after a button press
 
-//        return replyKeyboardMarkup;
         return null;
     }
 
