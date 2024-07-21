@@ -75,4 +75,12 @@ public class UserService {
         String card2 = transferActivebyUser[2];
         userRepositary.transferBetCards(Integer.valueOf(user_id),card1,card2,amount);
     }
+
+    public void depositAmountInCard(Long chatId, String text) {
+        //Cardni numberini Calbackdan olib olamiz,
+        String number = "number";
+        Integer user_id = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        userRepositary.depositAmount(user_id,number,text);
+
+    }
 }

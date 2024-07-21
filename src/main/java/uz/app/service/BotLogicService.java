@@ -63,15 +63,7 @@ public class BotLogicService {
                 userServise.updateState(chatId,UserState.ADD_CARD_NUMBER);
             }
             case Utils.TRANSFER-> {
-                List<Card> cards = userServise.showCards(chatId);
-                if (cards.isEmpty()) {
-                    sendMessage.setText("cards not yet");
-                    botService.executeMessages(sendMessage);
-                    return;
-                }
-                sendMessage.setText("your card number: ");
-                sendMessage.setReplyMarkup(inlineService.inlineMarkup(cards));
-                botService.executeMessages(sendMessage);
+                tansfer_deposit(chatId);
 //                userServise.updateState(chatId,);
 //                shu yerda state ni o'zgartirib calbackda cardni ushlab oladi,
 //                keyin transferdagi db ga bittasini saqlaydi, keyin ikkinchini shu pasda saqlaymiz keyin transfer,
@@ -82,12 +74,18 @@ public class BotLogicService {
                 sendMessage.setText("O'kazma muvaffaqiyatli amalga oshirildi");
                 sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
                 botService.executeMessages(sendMessage);
+                userRepositary.setTransferCanceled(chatId);
             }
             case Utils.DEPOSIT ->{
+                tansfer_deposit(chatId);
+//                userServise.updateState(chatId,);
+//                shu yerda state ni o'zgartirib calbackda cardni ushlab oladi,
+//                keyin summani kiriting deymiz, kiritadi, o'sha summani o'sha kartaga qo'shamiz,
 //                botService.executeMessages(sendMessage);
 //                userServise.updateState(chatId,UserState.MAIN_MENU);
             }
             case Utils.HISTORY -> {
+
 //
             }
             case Utils.CANCEL -> {
@@ -105,6 +103,18 @@ public class BotLogicService {
                 userStateHandler(update);
             }
         }
+    }
+
+    private void tansfer_deposit(Long chatId) {
+        List<Card> cards = userServise.showCards(chatId);
+        if (cards.isEmpty()) {
+            sendMessage.setText("cards not yet");
+            botService.executeMessages(sendMessage);
+            return;
+        }
+        sendMessage.setText("choose card number: ");
+        sendMessage.setReplyMarkup(inlineService.inlineMarkup(cards));
+        botService.executeMessages(sendMessage);
     }
 
     public void userStateHandler(Update update){
@@ -156,6 +166,12 @@ public class BotLogicService {
                 String  inform = userRepositary.getUserActiveTransferInform(chatId);
                 sendMessage.setText("Siz kiritgan ma'lumotlar: \n" + inform );
                 sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.TRANSFER_AGREE));
+                botService.executeMessages(sendMessage);
+            }
+            case DEPOSIT_AMOUNT -> {
+                userServise.depositAmountInCard(chatId,text);
+                sendMessage.setText("pul Kiritildi");
+                sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
                 botService.executeMessages(sendMessage);
             }
             default -> {

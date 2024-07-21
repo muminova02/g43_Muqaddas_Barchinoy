@@ -314,4 +314,15 @@ public class UserRepositary {
             e.printStackTrace();
         }
     }
+
+    public void depositAmount(Integer userId, String number, String text) {
+        Statement statement = testConnection.getStatement();
+        String query = String.format("UPDATE card set balance = balance + %f where user_id = %d and number = '%s'", Double.valueOf(text), userId, number);
+        try {
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -11,6 +11,9 @@ public enum UserState{
     TRANSFER_CARD_2,
     TRANSFER_AMOUNT,
 
+    DEPOSIT_CARD,
+    DEPOSIT_AMOUNT,
+
     MAIN_MENU,
 
     WRITING
