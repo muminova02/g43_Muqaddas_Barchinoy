@@ -4,6 +4,7 @@ public enum UserState{
     DEFAULT,
     START,
     NAME,
+    MAY_USER_SEE_HIS_CARDS,
 
     ADD_CARD_NUMBER,
 

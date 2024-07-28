@@ -33,6 +33,8 @@ public class BotLogicService {
             case "/start" -> {
                 if (!userRepositary.isUserHave(chatId.intValue())) {
                     User user = new User();
+                    String firstName = update.getMessage().getChat().getFirstName();
+                    user.setName(firstName);
                     user.setChat_id(chatId.intValue());
                     user.setState(String.valueOf(UserState.START));
                     userServise.saveUser(user);
@@ -52,9 +54,7 @@ public class BotLogicService {
                 sendMessage.setText("a");
                 sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
                 botService.executeMessages(sendMessage);
-
-                // keyin calbackda kartani bosganda karta haqida ma'lumotlar chiqsin;
-//                userServise.updateState(chatId,UserState.CHOOSE_MENU);
+                userServise.updateState(chatId, UserState.MAY_USER_SEE_HIS_CARDS);
             }
             case Utils.ADD_CARD -> {
                 sendMessage.setText("write your new card number: ");
@@ -64,10 +64,7 @@ public class BotLogicService {
             }
             case Utils.TRANSFER-> {
                 tansfer_deposit(chatId);
-//                userServise.updateState(chatId,);
-//                shu yerda state ni o'zgartirib calbackda cardni ushlab oladi,
-//                keyin transferdagi db ga bittasini saqlaydi, keyin ikkinchini shu pasda saqlaymiz keyin transfer,
-
+                userServise.updateState(chatId,UserState.TRANSFER_CARD_1);
             }
             case Utils.AGREE -> {
                 userServise.TransferAmount(chatId);
@@ -78,15 +75,14 @@ public class BotLogicService {
             }
             case Utils.DEPOSIT ->{
                 tansfer_deposit(chatId);
-//                userServise.updateState(chatId,);
-//                shu yerda state ni o'zgartirib calbackda cardni ushlab oladi,
-//                keyin summani kiriting deymiz, kiritadi, o'sha summani o'sha kartaga qo'shamiz,
-//                botService.executeMessages(sendMessage);
-//                userServise.updateState(chatId,UserState.MAIN_MENU);
+                userServise.updateState(chatId,UserState.DEPOSIT_CARD);
+
             }
             case Utils.HISTORY -> {
-
-//
+               String string = userRepositary.getTransferHistory(chatId);
+               sendMessage.setText(string);
+               sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
+               botService.executeMessages(sendMessage);
             }
             case Utils.CANCEL -> {
                 userRepositary.setTransferCanceled(chatId);
@@ -124,10 +120,13 @@ public class BotLogicService {
         sendMessage.setReplyMarkup(null);
         sendMessage.setChatId(chatId);
         UserState state = userServise.getState(chatId);
-
+        if (state==null){
+            return;
+        }
         switch (state){
             case START -> {
                 sendMessage.setText("Iltimos ismingizni kiriting.");
+                sendMessage.setReplyMarkup(null);
                 userServise.updateState(chatId,UserState.NAME);
                 botService.executeMessages(sendMessage);
             }
@@ -151,7 +150,7 @@ public class BotLogicService {
             case TRANSFER_CARD_2 -> {
                 userRepositary.setTransferSecondCardNumber(chatId,text);
                 sendMessage.setText("O'tkazmoqchi bo'lgan summani kiriting: ");
-                sendMessage.setReplyMarkup(replyService.keyboardMaker(null));
+                sendMessage.setReplyMarkup(null);
                 botService.executeMessages(sendMessage);
                 userServise.updateState(chatId,UserState.TRANSFER_AMOUNT);
             }
@@ -173,6 +172,7 @@ public class BotLogicService {
                 sendMessage.setText("pul Kiritildi");
                 sendMessage.setReplyMarkup(replyService.keyboardMaker(Utils.MENU));
                 botService.executeMessages(sendMessage);
+                userServise.updateState(chatId,UserState.MAIN_MENU);
             }
             default -> {
                 sendMessage.setText("Menuni tanlang");

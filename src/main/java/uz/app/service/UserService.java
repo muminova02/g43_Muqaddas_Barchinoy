@@ -23,18 +23,23 @@ public class UserService {
     }
 
     public UserState getState(Long chatId){
-//        HashMap<Long, User> users = db.getUsers();
-//        User user1 = users.get(chatId);
-//       return user1.getState();
-        return null;
+       String state =  userRepositary.getUserStateByChatId(chatId);
+       if (state == null){
+           return null;
+       }
+        return UserState.valueOf(state);
     }
 
 
 
     public void addCardForUser(Long chatId, Card card) {
-        Integer userIdInDb = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        Integer userIdInDb = userRepositary.getUserIdByChatid(chatId.intValue());
         card.setUser_id(userIdInDb);
-        userRepositary.addCard(card);
+        if (userRepositary.addCard(card)) {
+            System.out.println("card qo'shildi");
+        }else {
+            System.out.println("card qo'shilmadi'");
+        }
     }
 
 
@@ -58,7 +63,7 @@ public class UserService {
     }
 
     public boolean setTransferAmount(Long chatId, String text) {
-        Integer userIdByChatid = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        Integer userIdByChatid = userRepositary.getUserIdByChatid(chatId.intValue());
         boolean b = userRepositary.checkBalanseUserInTransfer(chatId, text);
         if (b){
             userRepositary.setTransferAmount(userIdByChatid,text);
@@ -78,9 +83,8 @@ public class UserService {
 
     public void depositAmountInCard(Long chatId, String text) {
         //Cardni numberini Calbackdan olib olamiz,
-        String number = "number";
-        Integer user_id = userRepositary.getUserIdByChatid(Math.toIntExact(chatId));
+        String number = CallbackQueryHandler.depositCardNumber;
+        Integer user_id = userRepositary.getUserIdByChatid(chatId.intValue());
         userRepositary.depositAmount(user_id,number,text);
-
     }
 }

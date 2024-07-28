@@ -8,7 +8,7 @@ import java.util.Properties;
 
 
 public class TestConnection {
-    private final  String databaseURL = "jdbc:postgresql://localhost:5432/market_db";
+    private final  String databaseURL = "jdbc:postgresql://localhost:5432/exam_bot_db";
     private  Connection connection = null;
 
     public  void test() {

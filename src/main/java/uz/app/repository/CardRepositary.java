@@ -16,26 +16,26 @@ public class CardRepositary {
 
     TestConnection testConnection = TestConnection.getInstance();
 
-    public <T> List<T> getAllThings(Class<T> clazz, String tableName, RowMapper<T> rowMapper) {
-        try {
-            Statement statement = testConnection.getStatement();
-            ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", tableName));
-            return mapResults(resultSet, rowMapper);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
+//    public <T> List<T> getAllThings(Class<T> clazz, String tableName, RowMapper<T> rowMapper) {
+//        try {
+//            Statement statement = testConnection.getStatement();
+//            ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", tableName));
+//            return mapResults(resultSet, rowMapper);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return new ArrayList<>();
+//    }
 
 
-    private <T> List<T> mapResults(ResultSet resultSet, RowMapper<T> rowMapper) throws SQLException {
-        List<T> results = new ArrayList<>();
-        while (resultSet.next()) {
-            T rowObject = rowMapper.mapRow(resultSet);
-            results.add(rowObject);
-        }
-        return results;
-    }
+//    private <T> List<T> mapResults(ResultSet resultSet, RowMapper<T> rowMapper) throws SQLException {
+//        List<T> results = new ArrayList<>();
+//        while (resultSet.next()) {
+//            T rowObject = rowMapper.mapRow(resultSet);
+//            results.add(rowObject);
+//        }
+//        return results;
+//    }
 
     public Card makeCard(ResultSet resultSet) throws SQLException {
         Card card = new Card();
@@ -48,7 +48,7 @@ public class CardRepositary {
 
 
 
-    public Optional<Card> getCarsById(String numaber ){
+    public Optional<Card> getCardsById(String numaber ){
         Statement statement = testConnection.getStatement();
 
         ResultSet resultSet = null;
@@ -79,19 +79,6 @@ public class CardRepositary {
         }
     }
 
-
-
-    public void disableProduct(Integer product_id) {
-        Statement statement = testConnection.getStatement();
-        try {
-            String query = String.format("Update product set active = false where id = %d",
-                    product_id
-            );
-            statement.execute(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 

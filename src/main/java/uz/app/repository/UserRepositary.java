@@ -2,6 +2,7 @@ package uz.app.repository;
 
 
 import uz.app.enums.Card;
+import uz.app.enums.Transfer;
 import uz.app.enums.User;
 import uz.app.utils.TestConnection;
 
@@ -18,10 +19,13 @@ public class UserRepositary {
 
     public User makeUser(ResultSet resultSet) throws SQLException {
         User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setName(resultSet.getString("name"));
-        user.setState("start");
-        return user;
+        if (resultSet.next()) {
+            user.setId(resultSet.getInt("id"));
+            user.setName(resultSet.getString("name"));
+            user.setState(resultSet.getString("state"));
+            return user;
+        }
+        return null;
     }
 
     public List<User> getUsers(ResultSet resultSet) {
@@ -41,7 +45,8 @@ public class UserRepositary {
     public void save(User user) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into users(state,chat_id) values('%s','%d')",
+            String query = String.format("insert into users(name,state,chat_id) values('%s','%s','%d')",
+                    user.getName(),
                     user.getState(),
                     user.getChat_id()
             );
@@ -99,12 +104,9 @@ public class UserRepositary {
     public Optional<User> getUserById(int userId) {
         Statement statement = testConnection.getStatement();
         try {
-            ResultSet resultSet = statement.executeQuery(String.format("select * from users where id = '%d';", userId));
-            resultSet.next();
-//            System.out.println(resultSet.getString("password"));
-//            int row = resultSet.getRow();
+            ResultSet resultSet = statement.executeQuery(String.format("select * from users where chat_id = '%d';", userId));
             User user1 =  makeUser(resultSet);
-            return Optional.of(user1);
+            if ( user1 != null ) return Optional.of(user1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,7 +118,7 @@ public class UserRepositary {
         try {
             ResultSet resultSet = statement.executeQuery(String.format("select * from users where chat_id = '%d';", chat_id));
             resultSet.next();
-            return resultSet.getInt("chat_id");
+            return resultSet.getInt("id");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -124,9 +126,9 @@ public class UserRepositary {
     }
     public void setUpdateState(Long chatId, String string) {
         Statement statement = testConnection.getStatement();
-
+        int i = chatId.intValue();
         try {
-            String format = String.format("update users  set  state = '%s' where chat_id = '%d';", string, chatId);
+            String format = String.format("update users  set  state = '%s' where chat_id = '%d';", string, i);
             statement.execute(format);
 
         } catch (SQLException e) {
@@ -136,24 +138,26 @@ public class UserRepositary {
     }
 
     public void setUserName(Long chatId, String text) {
-
+        int i = chatId.intValue();
         Statement statement = testConnection.getStatement();
 
-        String format = String.format(" UPDATE users SET name = %s WHERE chatId = %s",text,chatId);
+        String format = String.format("UPDATE users SET name = '%s' WHERE chat_id = %d",text,i);
         try {
             statement.execute(format);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
     }
 
     public boolean addCard(Card card) {
         Statement statement = testConnection.getStatement();
-        String query = String.format("INSERT INTO card(number,balance,user_id) values('%s','%f','%d',)",card.getNumber(),card.getBalance(),card.getUser_id());
+        String query = String.format("INSERT INTO card(number,balance,user_id) values('%s',%f,%d)"
+                ,card.getNumber(),card.getBalance(),card.getUser_id());
         try {
             statement.execute(query);
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -170,9 +174,11 @@ public class UserRepositary {
 
 
     public List<Card> getCardsById(Long chatId) {
+        int i = chatId.intValue();
+
         try {
             Statement statement = testConnection.getStatement();
-            return getCards(statement.executeQuery(String.format("select card.* from card join users on card.user_id = users.id where users.chat_id = %d;",chatId)));
+            return getCards(statement.executeQuery(String.format("select card.* from card join users on card.user_id = users.id where users.chat_id = %d;",i)));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -202,9 +208,19 @@ public class UserRepositary {
         return card;
     }
 
-
+    public void createTransferAndSetCard1(Long chatId,String FirsCardNumber){
+        int id = getUserIdByChatid(chatId.intValue());
+        Statement statement = testConnection.getStatement();
+        String query = String.format("Insert into transfer(user_id,from_card,active) values(%d,%s,%b)"
+                ,id,FirsCardNumber,true);
+        try {
+            statement.execute(query);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
     public void setTransferSecondCardNumber(Long chatId, String text) {
-        int id = getUserIdByChatid(Math.toIntExact(chatId));
+        int id = getUserIdByChatid(chatId.intValue());
         Statement statement = testConnection.getStatement();
         String query = String.format("update transfer set to_card = '%s' where user_id = '%d';",text,id);
         try {
@@ -215,7 +231,7 @@ public class UserRepositary {
     }
 
     public boolean checkBalanseUserInTransfer(Long chatId, String text) {
-        Integer userId = getUserIdByChatid(Math.toIntExact(chatId));
+        Integer userId = getUserIdByChatid(chatId.intValue());
         Statement statement = testConnection.getStatement();
         String from_card;
         Double balance = 0d;
@@ -227,7 +243,7 @@ public class UserRepositary {
             ResultSet resultSet1 = statement1.executeQuery(String.format("select balance from card where number = '%s'",from_card));
             resultSet1.next();
             balance = resultSet1.getDouble("balance");
-            if (balance<Double.valueOf(text)){
+            if (balance>Double.valueOf(text)){
                 return true;
             }
         } catch (SQLException e) {
@@ -250,7 +266,7 @@ public class UserRepositary {
     }
 
     public String getUserActiveTransferInform(Long chatId) {
-        Integer user_id = getUserIdByChatid(Math.toIntExact(chatId));
+        Integer user_id = getUserIdByChatid(chatId.intValue());
         Statement statement = testConnection.getStatement();
         String query = String.format("select * from transfer where user_id = %d and active = true", user_id);
         try {
@@ -262,7 +278,7 @@ public class UserRepositary {
             stringBuilder.append("\nshu kartaga: ");
             stringBuilder.append(resultSet.getString("to_card"));
             stringBuilder.append("\no'tkazilayotgan summa: ");
-            stringBuilder.append(resultSet.getDouble("balance"));
+            stringBuilder.append(resultSet.getDouble("amount"));
             return stringBuilder.toString();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -270,7 +286,7 @@ public class UserRepositary {
         return "mavjud emas;";
     }
     public String[] getTransferActivebyUser(Long chatId){
-        Integer user_id = getUserIdByChatid(Math.toIntExact(chatId));
+        Integer user_id = getUserIdByChatid(chatId.intValue());
         Statement statement = testConnection.getStatement();
         String query = String.format("select * from transfer where user_id = '%d' and active = true", user_id);
         try {
@@ -280,7 +296,7 @@ public class UserRepositary {
             strings[0] = String.valueOf(resultSet.getInt("user_id"));
             strings[1] = resultSet.getString("from_card");
             strings[2] = resultSet.getString("to_card");
-            strings[3] = String.valueOf(resultSet.getDouble("balance"));
+            strings[3] = String.valueOf(resultSet.getDouble("amount"));
             return strings;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -290,8 +306,8 @@ public class UserRepositary {
 
     public void setTransferCanceled(Long chatId) {
         Statement statement = testConnection.getStatement();
-        Integer user_id = getUserIdByChatid(Math.toIntExact(chatId));
-        String query = String.format("update transfer set active = false where user_id = '%d'", user_id);
+        Integer user_id = getUserIdByChatid(chatId.intValue());
+        String query = String.format("update transfer set active = false where user_id = %d", user_id);
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -324,5 +340,81 @@ public class UserRepositary {
             e.printStackTrace();
         }
 
+    }
+
+    public String getUserStateByChatId(Long chatId) {
+        int i = chatId.intValue();
+        Statement statement = testConnection.getStatement();
+        ResultSet resultSet = null;
+        try {
+            String query = String.format("SELECT state FROM users WHERE chat_id = '%d'", i);
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return resultSet.getString("state");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public String getTransferHistory(Long chatId) {
+        Integer user_id = getUserIdByChatid(chatId.intValue());
+        Statement statement = testConnection.getStatement();
+        String query = String.format("select * from transfer where user_id = %d", user_id);
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            ResultSet resultSet = statement.executeQuery(query);
+            List<Transfer> transfers = getTransfers(resultSet);
+            int i=1;
+            for (Transfer transfer : transfers) {
+                stringBuilder.append((i++) + " - Transfer: ");
+                stringBuilder.append("\nFrom card: ");
+                stringBuilder.append(transfer.getFrom_card());
+                stringBuilder.append("\nTo card: ");
+                stringBuilder.append(transfer.getTo_card());
+                stringBuilder.append("\no'tkazilgan summa: ");
+                stringBuilder.append(transfer.getAmount());
+                stringBuilder.append("\nactive: ");
+                stringBuilder.append(transfer.isActive());
+            }
+            return stringBuilder.toString();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "mavjud emas;";
+    }
+
+
+    public List<Transfer> getTransfers(ResultSet resultSet) {
+        List<Transfer> transfers = new ArrayList<>();
+        try {
+            while (true) {
+                if (!resultSet.next()) break;
+                Transfer transfer = makeTransfer(resultSet);
+                transfers.add(transfer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transfers;
+    }
+
+    public Transfer makeTransfer(ResultSet resultSet) throws SQLException {
+        Transfer transfer = new Transfer();
+        transfer.setId(resultSet.getInt("id"));
+        transfer.setUser_id(resultSet.getInt("user_id"));
+        transfer.setFrom_card(resultSet.getString("from_card"));
+        transfer.setTo_card(resultSet.getString("to_card"));
+        transfer.setAmount(resultSet.getDouble("amount"));
+        transfer.setActive(resultSet.getBoolean("active"));
+        return transfer;
     }
 }
